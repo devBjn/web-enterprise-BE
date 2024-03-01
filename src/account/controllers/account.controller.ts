@@ -1,7 +1,9 @@
 import { Controller, Get, Param } from '@nestjs/common';
 import { AccountService } from './../account.service';
 import { GetAccountResponse } from '../dtos/create.account.dto';
-import { ApiParam } from '@nestjs/swagger';
+import { ApiParam, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Account')
 @Controller('account')
 export class AccountController {
   constructor(private readonly accountService: AccountService) {}

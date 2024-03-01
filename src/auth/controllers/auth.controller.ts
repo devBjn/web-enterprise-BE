@@ -19,7 +19,9 @@ import {
 import { EmailAccountRequest } from 'src/account/dtos/email.account.dto';
 import { CodeAuthRequest } from '../dtos/code.auth.dto';
 import { PasswordAccountRequest } from 'src/account/dtos/password.account.dto';
+import { ApiTags } from '@nestjs/swagger';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
   constructor(

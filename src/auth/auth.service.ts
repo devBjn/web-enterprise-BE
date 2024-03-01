@@ -5,7 +5,6 @@ import { Account } from 'src/account/entity/account.entity';
 import { Repository } from 'typeorm';
 import * as bcrypt from 'bcrypt';
 import { AccountService } from 'src/account/account.service';
-import nodemailer from 'nodemailer';
 import { GetAccountResponse } from 'src/account/dtos/create.account.dto';
 
 @Injectable()
@@ -31,11 +30,14 @@ export class AuthService {
   }
 
   public async sendCodeResetPassword(email: string): Promise<object> {
+    // eslint-disable-next-line @typescript-eslint/no-var-requires
+    const nodemailer = require('nodemailer');
     const account = await this.accountService.getAccountByEmail(email);
 
     if (!account) throw new BadRequestException('Account not found !');
 
     this.email = account.email;
+    console.log(nodemailer, 'nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
