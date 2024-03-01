@@ -37,7 +37,6 @@ export class AuthService {
     if (!account) throw new BadRequestException('Account not found !');
 
     this.email = account.email;
-    console.log(nodemailer, 'nodemailer');
     const transporter = nodemailer.createTransport({
       service: 'gmail',
       auth: {
