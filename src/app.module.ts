@@ -7,6 +7,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import ormConfigProd from './config/orm.config.prod';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './account/account.module';
+import { MediaModule } from './media/media.module';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { AccountModule } from './account/account.module';
     }),
     AuthModule,
     AccountModule,
+    MediaModule,
   ],
   controllers: [AppController],
   providers: [AppService],
