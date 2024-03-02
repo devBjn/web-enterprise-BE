@@ -1,3 +1,4 @@
+import { Role } from 'src/roles/constants';
 import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Account {
@@ -18,4 +19,7 @@ export class Account {
 
   @Column({ unique: true })
   email: string;
+
+  @Column({ type: 'simple-array', nullable: true })
+  roles: Role[];
 }

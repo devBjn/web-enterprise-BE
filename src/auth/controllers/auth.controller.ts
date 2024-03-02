@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   BadRequestException,
   Body,
@@ -20,6 +21,7 @@ import { EmailAccountRequest } from 'src/account/dtos/email.account.dto';
 import { CodeAuthRequest } from '../dtos/code.auth.dto';
 import { PasswordAccountRequest } from 'src/account/dtos/password.account.dto';
 import { ApiTags } from '@nestjs/swagger';
+import { Role } from 'src/roles/constants';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -34,7 +36,6 @@ export class AuthController {
   @UseGuards(AuthGuardLocal)
   async login(
     @CurrentUser() account: Account,
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     @Body() loginAccountRequest: LoginAccountRequest,
   ) {
     const accountInfo: GetAccountResponse = {
@@ -43,6 +44,7 @@ export class AuthController {
       email: account.email,
       firstName: account.firstName,
       lastName: account.lastName,
+      roles: account.roles,
     };
     return {
       user: accountInfo,
@@ -76,6 +78,7 @@ export class AuthController {
     account.email = createAccountRequest.email;
     account.firstName = createAccountRequest.firstName;
     account.lastName = createAccountRequest.lastName;
+    account.roles = [Role.STUDENT];
 
     const savedUser = await this.accountRepository.save(account);
     const token = this.authService.getTokenForUser(account);
