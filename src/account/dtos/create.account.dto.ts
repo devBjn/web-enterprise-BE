@@ -1,4 +1,5 @@
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
+import { Role } from 'src/roles/constants';
 
 export class CreateAccountRequest {
   @Length(5)
@@ -48,4 +49,6 @@ export class GetAccountResponse {
 
   @IsString()
   token?: string;
+
+  roles?: Role[];
 }
