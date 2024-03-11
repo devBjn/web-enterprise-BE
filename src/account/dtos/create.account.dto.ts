@@ -1,5 +1,7 @@
 import { IsEmail, IsNotEmpty, IsString, Length } from 'class-validator';
-import { Role } from 'src/roles/constants';
+import { Faculty } from 'src/faculty/entity/faculty.entity';
+import { Roles } from 'src/roles/entity/roles.entity';
+// import { Role } from 'src/roles/constants';
 
 export class CreateAccountRequest {
   @Length(5)
@@ -25,6 +27,9 @@ export class CreateAccountRequest {
   @IsEmail()
   @IsNotEmpty()
   email: string;
+
+  @IsNotEmpty()
+  faculty: string;
 }
 
 export class GetAccountResponse {
@@ -50,5 +55,7 @@ export class GetAccountResponse {
   @IsString()
   token?: string;
 
-  roles?: Role[];
+  roles?: Roles;
+
+  faculty?: Faculty;
 }

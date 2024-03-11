@@ -1,5 +1,7 @@
-import { Role } from 'src/roles/constants';
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+// import { Role } from 'src/roles/constants';
+import { Faculty } from 'src/faculty/entity/faculty.entity';
+import { Roles } from 'src/roles/entity/roles.entity';
+import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
@@ -20,6 +22,11 @@ export class Account {
   @Column({ unique: true })
   email: string;
 
-  @Column({ type: 'simple-array', nullable: true })
-  roles: Role[];
+  @ManyToOne(() => Roles, (role) => role.roleAccount)
+  @Column({ type: 'json', nullable: true })
+  roles: Roles;
+
+  @ManyToOne(() => Faculty, (faculty) => faculty.facultyAccount)
+  @Column({ type: 'json', nullable: true })
+  faculty: Faculty;
 }

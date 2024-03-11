@@ -21,7 +21,8 @@ import { EmailAccountRequest } from 'src/account/dtos/email.account.dto';
 import { CodeAuthRequest } from '../dtos/code.auth.dto';
 import { PasswordAccountRequest } from 'src/account/dtos/password.account.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Role } from 'src/roles/constants';
+import { Roles } from 'src/roles/entity/roles.entity';
+import { Faculty } from 'src/faculty/entity/faculty.entity';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -30,6 +31,10 @@ export class AuthController {
     private readonly authService: AuthService,
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    @InjectRepository(Roles)
+    private readonly rolesRepository: Repository<Roles>,
+    @InjectRepository(Faculty)
+    private readonly facultyRepository: Repository<Faculty>,
   ) {}
 
   @Post('login')
@@ -78,8 +83,27 @@ export class AuthController {
     account.email = createAccountRequest.email;
     account.firstName = createAccountRequest.firstName;
     account.lastName = createAccountRequest.lastName;
-    account.roles = [Role.STUDENT];
 
+    const accountFaculty = await this.facultyRepository.findOne({
+      where: {
+        name: createAccountRequest.faculty,
+      },
+    });
+
+    account.faculty = accountFaculty;
+
+    let studentRole = await this.rolesRepository.findOne({
+      where: { name: 'student' },
+    });
+
+    if (!studentRole) {
+      studentRole = new Roles();
+      studentRole.name = 'student';
+      studentRole.description = 'student';
+      studentRole = await this.rolesRepository.save(studentRole);
+    }
+
+    account.roles = studentRole;
     const savedUser = await this.accountRepository.save(account);
     const token = this.authService.getTokenForUser(account);
 
@@ -89,6 +113,8 @@ export class AuthController {
       email: savedUser.email,
       firstName: savedUser.firstName,
       lastName: savedUser.lastName,
+      faculty: savedUser.faculty,
+      roles: savedUser.roles,
       token,
     };
   }

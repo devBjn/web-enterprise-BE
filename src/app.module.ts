@@ -8,6 +8,8 @@ import ormConfigProd from './config/orm.config.prod';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './account/account.module';
 import { MediaModule } from './media/media.module';
+import { RolesModule } from './roles/roles.module';
+import { FacultyModule } from './faculty/faculty.module';
 
 @Module({
   imports: [
@@ -23,6 +25,8 @@ import { MediaModule } from './media/media.module';
     AuthModule,
     AccountModule,
     MediaModule,
+    RolesModule,
+    FacultyModule,
   ],
   controllers: [AppController],
   providers: [AppService],
