@@ -1,7 +1,14 @@
 // import { Role } from 'src/roles/constants';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { Roles } from 'src/roles/entity/roles.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Submission } from 'src/submission/entity/submission.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
@@ -29,4 +36,7 @@ export class Account {
   @ManyToOne(() => Faculty, (faculty) => faculty.facultyAccount)
   @Column({ type: 'json', nullable: true })
   faculty: Faculty;
+
+  @OneToMany(() => Submission, (submission) => submission.author)
+  ownerSubmission?: Submission;
 }

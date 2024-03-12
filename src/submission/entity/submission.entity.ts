@@ -15,12 +15,21 @@ export class Submission {
   @Column({ unique: true })
   name: string;
 
+  @Column({ unique: true })
+  description: string;
+
   @Column()
   createdAt: Date;
 
-  // @ManyToOne(() => Account, (account) => account.ownerSubmission, {
-  //   onDelete: 'CASCADE',
-  // })
-  // @JoinColumn({ name: 'author' })
-  // author: Account;
+  @Column()
+  updateAt: Date;
+
+  @Column()
+  files: string;
+
+  @ManyToOne(() => Account, (account) => account.ownerSubmission, {
+    onDelete: 'CASCADE',
+  })
+  @JoinColumn({ name: 'author' })
+  author: Account;
 }
