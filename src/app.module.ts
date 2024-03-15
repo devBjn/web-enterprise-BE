@@ -10,6 +10,8 @@ import { AccountModule } from './account/account.module';
 import { MediaModule } from './media/media.module';
 import { RolesModule } from './roles/roles.module';
 import { FacultyModule } from './faculty/faculty.module';
+import { StatusModule } from './status/status.module';
+import { PeriodModule } from './period/period.module';
 
 @Module({
   imports: [
@@ -27,6 +29,8 @@ import { FacultyModule } from './faculty/faculty.module';
     MediaModule,
     RolesModule,
     FacultyModule,
+    StatusModule,
+    PeriodModule,
   ],
   controllers: [AppController],
   providers: [AppService],

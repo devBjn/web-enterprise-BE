@@ -1,4 +1,3 @@
-// import { Role } from 'src/roles/constants';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { Roles } from 'src/roles/entity/roles.entity';
 import { Submission } from 'src/submission/entity/submission.entity';
@@ -37,6 +36,6 @@ export class Account {
   @Column({ type: 'json', nullable: true })
   faculty: Faculty;
 
-  @OneToMany(() => Submission, (submission) => submission.author)
-  ownerSubmission?: Submission;
+  // @OneToMany(() => Submission, (submission) => submission.author)
+  // ownerSubmission?: Submission;
 }

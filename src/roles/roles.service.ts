@@ -18,11 +18,11 @@ export class RolesService {
     return await this.getRolesBaseQuery().getMany();
   }
 
-  public async getRoleByName(name: string) {
-    return await this.rolesRepository.findOne({
-      where: {
-        name,
-      },
-    });
-  }
+  // public async getRoleByName(name: string) {
+  //   return await this.rolesRepository.findOne({
+  //     where: {
+  //       name,
+  //     },
+  //   });
+  // }
 }

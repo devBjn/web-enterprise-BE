@@ -21,7 +21,7 @@ import { EmailAccountRequest } from 'src/account/dtos/email.account.dto';
 import { CodeAuthRequest } from '../dtos/code.auth.dto';
 import { PasswordAccountRequest } from 'src/account/dtos/password.account.dto';
 import { ApiTags } from '@nestjs/swagger';
-import { Roles } from 'src/roles/entity/roles.entity';
+import { RoleName, Roles } from 'src/roles/entity/roles.entity';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 
 @ApiTags('Auth')
@@ -50,6 +50,7 @@ export class AuthController {
       firstName: account.firstName,
       lastName: account.lastName,
       roles: account.roles,
+      faculty: account.faculty,
     };
     return {
       user: accountInfo,
@@ -93,12 +94,12 @@ export class AuthController {
     account.faculty = accountFaculty;
 
     let studentRole = await this.rolesRepository.findOne({
-      where: { name: 'student' },
+      where: { name: RoleName.STUDENT },
     });
 
     if (!studentRole) {
       studentRole = new Roles();
-      studentRole.name = 'student';
+      studentRole.name = RoleName.STUDENT;
       studentRole.description = 'student';
       studentRole = await this.rolesRepository.save(studentRole);
     }

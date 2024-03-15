@@ -27,9 +27,9 @@ export class Submission {
   @Column()
   files: string;
 
-  @ManyToOne(() => Account, (account) => account.ownerSubmission, {
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'author' })
-  author: Account;
+  // @ManyToOne(() => Account, (account) => account.ownerSubmission, {
+  //   onDelete: 'CASCADE',
+  // })
+  // @JoinColumn({ name: 'author' })
+  // author: Account;
 }
