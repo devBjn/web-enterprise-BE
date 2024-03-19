@@ -3,11 +3,14 @@ import { Repository } from 'typeorm';
 import { Account } from './entity/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetAccountResponse } from './dtos/create.account.dto';
+import { UpdateRoleAccountRequest } from './dtos/update.role.account.dto';
+import { RolesService } from 'src/roles/roles.service';
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
+    private readonly roleService: RolesService,
   ) {}
 
   private getAccountsBaseQuery() {
@@ -36,6 +39,8 @@ export class AccountService {
         email: account.email,
         firstName: account.firstName,
         lastName: account.lastName,
+        faculty: account.faculty,
+        roles: account.roles,
       };
     });
   }
@@ -48,6 +53,8 @@ export class AccountService {
       email: account.email,
       firstName: account.firstName,
       lastName: account.lastName,
+      faculty: account.faculty,
+      roles: account.roles,
     };
   }
 
@@ -66,6 +73,20 @@ export class AccountService {
       email: account.email,
       firstName: account.firstName,
       lastName: account.lastName,
+      faculty: account.faculty,
+      roles: account.roles,
     };
+  }
+
+  public async updateRole(
+    account: GetAccountResponse,
+    payload: UpdateRoleAccountRequest,
+  ) {
+    const roles = await this.roleService.getRoleByName(payload.roleName);
+
+    return await this.accountRepository.save({
+      ...account,
+      roles,
+    });
   }
 }

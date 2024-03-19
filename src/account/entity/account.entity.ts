@@ -1,6 +1,7 @@
+import { Comment } from 'src/comment/entity/comment.entity';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { Roles } from 'src/roles/entity/roles.entity';
-import { Submission } from 'src/submission/entity/submission.entity';
+import { Submissions } from 'src/submission/entity/submission.entity';
 import {
   Column,
   Entity,
@@ -14,7 +15,7 @@ export class Account {
   id: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column()
   firstName: string;
@@ -36,6 +37,9 @@ export class Account {
   @Column({ type: 'json', nullable: true })
   faculty: Faculty;
 
-  // @OneToMany(() => Submission, (submission) => submission.author)
-  // ownerSubmission?: Submission;
+  @OneToMany(() => Submissions, (submission) => submission.author)
+  ownerSubmission?: Submissions;
+
+  @OneToMany(() => Comment, (comment) => comment.author, { cascade: true })
+  comments?: Comment[];
 }

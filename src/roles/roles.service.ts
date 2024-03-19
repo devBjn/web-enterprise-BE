@@ -1,6 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Roles } from './entity/roles.entity';
+import { RoleName, Roles } from './entity/roles.entity';
 import { Repository } from 'typeorm';
 
 @Injectable()
@@ -18,11 +18,11 @@ export class RolesService {
     return await this.getRolesBaseQuery().getMany();
   }
 
-  // public async getRoleByName(name: string) {
-  //   return await this.rolesRepository.findOne({
-  //     where: {
-  //       name,
-  //     },
-  //   });
-  // }
+  public async getRoleByName(name: RoleName) {
+    return await this.rolesRepository.findOne({
+      where: {
+        name,
+      },
+    });
+  }
 }

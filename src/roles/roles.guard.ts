@@ -15,17 +15,18 @@ export class RolesGuard implements CanActivate {
     if (!requiredRoles) {
       return true;
     }
-    // const { user } = context.switchToHttp().getRequest();
-    // console.log(user, 'user');
+    const { user } = context.switchToHttp().getRequest();
 
-    const request = context.switchToHttp().getRequest();
+    const isMarketingManager = requiredRoles.includes(user.roles.name);
 
-    console.log(requiredRoles, 'required Roles');
-    console.log(request);
-    // const isMarketingManager = account?.roles.includes(Roles.name);
-    // if (isMarketingManager) return true;
+    if (isMarketingManager) return true;
 
-    // return requiredRoles.some((role) => account?.roles?.includes(role));
-    return;
+    const isAdmin = requiredRoles.includes(user.roles.name);
+    if (isAdmin) return true;
+
+    const isMarketingCoordinator = requiredRoles.includes(user.roles.name);
+    if (isMarketingCoordinator) return true;
+
+    return requiredRoles.some((role) => user?.roles?.name === role);
   }
 }

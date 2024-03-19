@@ -12,6 +12,8 @@ import { RolesModule } from './roles/roles.module';
 import { FacultyModule } from './faculty/faculty.module';
 import { StatusModule } from './status/status.module';
 import { PeriodModule } from './period/period.module';
+import { SubmissionModule } from './submission/submission.module';
+import { CommentModule } from './comment/comment.module';
 
 @Module({
   imports: [
@@ -31,6 +33,8 @@ import { PeriodModule } from './period/period.module';
     FacultyModule,
     StatusModule,
     PeriodModule,
+    SubmissionModule,
+    CommentModule,
   ],
   controllers: [AppController],
   providers: [AppService],
