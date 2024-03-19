@@ -3,14 +3,19 @@ import { Repository } from 'typeorm';
 import { Account } from './entity/account.entity';
 import { InjectRepository } from '@nestjs/typeorm';
 import { GetAccountResponse } from './dtos/create.account.dto';
-import { UpdateRoleAccountRequest } from './dtos/update.role.account.dto';
+import {
+  UpdateAccountRequest,
+  UpdateRoleAccountRequest,
+} from './dtos/update.role.account.dto';
 import { RolesService } from 'src/roles/roles.service';
+import { MediaService } from 'src/media/media.service';
 @Injectable()
 export class AccountService {
   constructor(
     @InjectRepository(Account)
     private readonly accountRepository: Repository<Account>,
     private readonly roleService: RolesService,
+    private readonly mediaService: MediaService,
   ) {}
 
   private getAccountsBaseQuery() {
@@ -47,6 +52,7 @@ export class AccountService {
 
   public async getAccount(id: string): Promise<GetAccountResponse | undefined> {
     const account = await this.checkExistAccount(id);
+
     return {
       id: account.id,
       username: account.username,
@@ -55,6 +61,10 @@ export class AccountService {
       lastName: account.lastName,
       faculty: account.faculty,
       roles: account.roles,
+      dob: account.dob,
+      phone: account.phone,
+      address: account.address,
+      avatar: account.avatar,
     };
   }
 
@@ -87,6 +97,27 @@ export class AccountService {
     return await this.accountRepository.save({
       ...account,
       roles,
+    });
+  }
+
+  public async updateAccountInfo(
+    account: GetAccountResponse,
+    image: Express.Multer.File,
+    payload: UpdateAccountRequest,
+  ) {
+    if (image) {
+      const avatar = await this.mediaService.upload(image);
+      payload.avatar = avatar;
+    }
+
+    return await this.accountRepository.save({
+      ...account,
+      firstName: payload.firstName,
+      lastName: payload.lastName,
+      dob: payload.dob,
+      phone: payload.phone,
+      address: payload.address,
+      ...(image && { avatar: payload.avatar }),
     });
   }
 }

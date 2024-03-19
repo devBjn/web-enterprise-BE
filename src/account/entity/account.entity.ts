@@ -37,6 +37,19 @@ export class Account {
   @Column({ type: 'json', nullable: true })
   faculty: Faculty;
 
+  @Column({ type: 'longtext', nullable: true })
+  avatar?: string;
+
+  //date of birth
+  @Column({ nullable: true })
+  dob?: string;
+
+  @Column({ nullable: true })
+  phone?: string;
+
+  @Column({ nullable: true })
+  address?: string;
+
   @OneToMany(() => Submissions, (submission) => submission.author)
   ownerSubmission?: Submissions;
 
