@@ -58,4 +58,13 @@ export class GetAccountResponse {
   roles?: Roles;
 
   faculty?: Faculty;
+
+  avatar?: string;
+
+  //date of birth
+  dob?: string;
+
+  phone?: string;
+
+  address?: string;
 }

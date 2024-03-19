@@ -10,6 +10,8 @@ import { AccountService } from 'src/account/account.service';
 import { Roles } from 'src/roles/entity/roles.entity';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { RolesService } from 'src/roles/roles.service';
+import { MediaService } from 'src/media/media.service';
+import { FirebaseService } from 'src/firebase/firebase.image.service';
 
 @Module({
   imports: [
@@ -29,6 +31,8 @@ import { RolesService } from 'src/roles/roles.service';
     AuthService,
     AccountService,
     RolesService,
+    MediaService,
+    FirebaseService,
   ],
   controllers: [AuthController],
 })
