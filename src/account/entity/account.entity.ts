@@ -1,14 +1,21 @@
-// import { Role } from 'src/roles/constants';
+import { Comment } from 'src/comment/entity/comment.entity';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { Roles } from 'src/roles/entity/roles.entity';
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from 'typeorm';
+import { Submissions } from 'src/submission/entity/submission.entity';
+import {
+  Column,
+  Entity,
+  ManyToOne,
+  OneToMany,
+  PrimaryGeneratedColumn,
+} from 'typeorm';
 @Entity()
 export class Account {
   @PrimaryGeneratedColumn('uuid')
   id: string;
 
   @Column()
-  password: string;
+  password?: string;
 
   @Column()
   firstName: string;
@@ -29,4 +36,10 @@ export class Account {
   @ManyToOne(() => Faculty, (faculty) => faculty.facultyAccount)
   @Column({ type: 'json', nullable: true })
   faculty: Faculty;
+
+  @OneToMany(() => Submissions, (submission) => submission.author)
+  ownerSubmission?: Submissions;
+
+  @OneToMany(() => Comment, (comment) => comment.author, { cascade: true })
+  comments?: Comment[];
 }

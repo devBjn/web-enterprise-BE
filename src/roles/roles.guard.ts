@@ -1,24 +1,32 @@
 import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { Reflector } from '@nestjs/core';
-import { ROLES_KEY, Role } from './constants';
+import { ROLES_KEY } from './constants';
+import { Roles } from './entity/roles.entity';
 
 @Injectable()
 export class RolesGuard implements CanActivate {
   constructor(private reflector: Reflector) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    const requiredRoles = this.reflector.getAllAndOverride<Role[]>(ROLES_KEY, [
+    const requiredRoles = this.reflector.getAllAndOverride<Roles[]>(ROLES_KEY, [
       context.getHandler(),
       context.getClass(),
     ]);
     if (!requiredRoles) {
       return true;
     }
-    const { account } = context.switchToHttp().getRequest();
+    const { user } = context.switchToHttp().getRequest();
 
-    const isMarketingManager = account?.roles.includes(Role.MARKETING_MANAGER);
+    const isMarketingManager = requiredRoles.includes(user.roles.name);
+
     if (isMarketingManager) return true;
 
-    return requiredRoles.some((role) => account?.roles?.includes(role));
+    const isAdmin = requiredRoles.includes(user.roles.name);
+    if (isAdmin) return true;
+
+    const isMarketingCoordinator = requiredRoles.includes(user.roles.name);
+    if (isMarketingCoordinator) return true;
+
+    return requiredRoles.some((role) => user?.roles?.name === role);
   }
 }

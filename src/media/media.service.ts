@@ -10,7 +10,6 @@ export class MediaService {
   async upload(file: any): Promise<string> {
     const storage = this.firebaseService.getStorageInstance();
     const bucket = storage.bucket();
-
     const fileName = withTimestamp(file.originalname);
     const fileUpload = bucket.file(fileName);
 
