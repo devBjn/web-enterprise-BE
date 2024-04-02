@@ -73,8 +73,6 @@ export class AuthService {
   public async resetPassword(password: string): Promise<GetAccountResponse> {
     const account = await this.accountService.getAccountByEmail(this.email);
 
-    if (!account) throw new BadRequestException('Account not found !');
-
     const accountAfterResetPass = await this.accountRepository.save({
       ...account,
       password,
