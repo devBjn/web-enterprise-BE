@@ -76,7 +76,7 @@ export class AccountService {
         email,
       })
       .getOne();
-
+    if (!account) throw new BadRequestException('Account not found !');
     return {
       id: account.id,
       username: account.username,
