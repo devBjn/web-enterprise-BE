@@ -7,10 +7,17 @@ import { RolesService } from 'src/roles/roles.service';
 import { Roles } from 'src/roles/entity/roles.entity';
 import { MediaService } from 'src/media/media.service';
 import { FirebaseService } from 'src/firebase/firebase.image.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Account, Roles])],
-  providers: [AccountService, RolesService, MediaService, FirebaseService],
+  providers: [
+    AccountService,
+    RolesService,
+    MediaService,
+    FirebaseService,
+    JwtService,
+  ],
   controllers: [AccountController],
 })
 export class AccountModule {}

@@ -9,6 +9,7 @@ import {
 } from './dtos/update.role.account.dto';
 import { RolesService } from 'src/roles/roles.service';
 import { MediaService } from 'src/media/media.service';
+import { JwtService } from '@nestjs/jwt';
 @Injectable()
 export class AccountService {
   constructor(
@@ -16,6 +17,7 @@ export class AccountService {
     private readonly accountRepository: Repository<Account>,
     private readonly roleService: RolesService,
     private readonly mediaService: MediaService,
+    private readonly jwtService: JwtService,
   ) {}
 
   private getAccountsBaseQuery() {
@@ -66,6 +68,15 @@ export class AccountService {
       address: account.address,
       avatar: account.avatar,
     };
+  }
+
+  public async getAccountByToken(
+    token: string,
+  ): Promise<GetAccountResponse | undefined> {
+    const payload = await this.jwtService.verifyAsync(token, {
+      secret: process.env.AUTH_SECRET,
+    });
+    return await this.getAccount(payload.sub);
   }
 
   public async getAccountByEmail(

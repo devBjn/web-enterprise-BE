@@ -31,12 +31,14 @@ export class AccountController {
     return await this.accountService.getAllAccounts();
   }
 
-  @Get(':id')
+  @Get('token/:token')
   @ApiParam({
-    name: 'id',
+    name: 'token',
   })
-  async getAccountDetail(@Param('id') id: string): Promise<GetAccountResponse> {
-    return await this.accountService.getAccount(id);
+  async getAccountDetail(
+    @Param('token') token: string,
+  ): Promise<GetAccountResponse> {
+    return await this.accountService.getAccountByToken(token);
   }
 
   @Patch('/update-role/:id')

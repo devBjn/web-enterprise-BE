@@ -13,6 +13,7 @@ import { AccountService } from 'src/account/account.service';
 import { Account } from 'src/account/entity/account.entity';
 import { RolesService } from 'src/roles/roles.service';
 import { Roles } from 'src/roles/entity/roles.entity';
+import { JwtService } from '@nestjs/jwt';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { Roles } from 'src/roles/entity/roles.entity';
     CommentService,
     AccountService,
     RolesService,
+    JwtService,
   ],
 })
 export class SubmissionModule {}
