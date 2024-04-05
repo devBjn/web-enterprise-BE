@@ -16,7 +16,7 @@ export class PeriodController {
   @Post('create')
   @ApiBearerAuth()
   @UseGuards(AuthGuardJwt, RolesGuard)
-  @Roles(RoleName.MARKETING_MANAGER)
+  @Roles(RoleName.ADMIN)
   async createPeriod(@Body() payload: CreatePeriodRequest): Promise<Period> {
     return await this.periodService.createPeriod(payload);
   }
