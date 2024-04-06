@@ -20,6 +20,8 @@ import {
   UpdateRoleAccountRequest,
 } from '../dtos/update.role.account.dto';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { CurrentUser } from 'src/auth/current-user.decorator';
+import { Account } from '../entity/account.entity';
 
 @ApiTags('Account')
 @Controller('account')
@@ -31,14 +33,22 @@ export class AccountController {
     return await this.accountService.getAllAccounts();
   }
 
-  @Get('token/:token')
-  @ApiParam({
-    name: 'token',
-  })
+  @Get('detail/information')
+  @UseGuards(AuthGuardJwt)
   async getAccountDetail(
-    @Param('token') token: string,
+    @CurrentUser() account: Account,
   ): Promise<GetAccountResponse> {
-    return await this.accountService.getAccountByToken(token);
+    return {
+      id: account.id,
+      username: account.username,
+      email: account.email,
+      firstName: account.firstName,
+      lastName: account.lastName,
+      dob: account.dob,
+      phone: account.phone,
+      address: account.address,
+      avatar: account.avatar,
+    };
   }
 
   @Patch('/update-role/:id')
@@ -52,7 +62,7 @@ export class AccountController {
     @Param('id') id: string,
     @Body() payload: UpdateRoleAccountRequest,
   ): Promise<GetAccountResponse> {
-    const account = await this.getAccountDetail(id);
+    const account = await this.accountService.getAccount(id);
     return await this.accountService.updateRole(account, payload);
   }
 
@@ -74,7 +84,7 @@ export class AccountController {
     @Body() payload: UpdateAccountRequest,
     @UploadedFile() image: Express.Multer.File,
   ): Promise<GetAccountResponse> {
-    const account = await this.getAccountDetail(id);
+    const account = await this.accountService.getAccount(id);
 
     return await this.accountService.updateAccountInfo(account, image, payload);
   }
