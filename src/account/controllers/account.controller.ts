@@ -35,6 +35,7 @@ export class AccountController {
 
   @Get('detail/information')
   @UseGuards(AuthGuardJwt)
+  @ApiBearerAuth()
   async getAccountDetail(
     @CurrentUser() account: Account,
   ): Promise<GetAccountResponse> {
