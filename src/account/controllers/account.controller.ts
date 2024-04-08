@@ -45,6 +45,7 @@ export class AccountController {
       email: account.email,
       firstName: account.firstName,
       lastName: account.lastName,
+      faculty: account.faculty,
       dob: account.dob,
       phone: account.phone,
       address: account.address,
