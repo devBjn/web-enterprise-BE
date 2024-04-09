@@ -202,11 +202,12 @@ export class SubmissionService {
     });
 
     const { password, ...info } = account;
-
+    console.log(files, 'files');
     const fileUrl = Promise.all(
       files.map(async (file) => await this.mediaService.upload(file)),
     );
     payload.files = await fileUrl;
+    console.log(payload.files, 'payload.files');
     const submission = await this.submissionRepository.save({
       ...payload,
       status: statusSubmission,
@@ -223,15 +224,36 @@ export class SubmissionService {
   }
 
   public async getApprovedSubmissionsList() {
-    const submissionsList = await this.getSubmissionBaseQuery().getMany();
-
+    const submissionsList = await this.getSubmissionBaseQuery()
+      .leftJoin('e.author', 'account')
+      .addSelect([
+        'account.id',
+        'account.username',
+        'account.email',
+        'account.firstName',
+        'account.lastName',
+        'account.roles',
+        'account.faculty',
+      ])
+      .getMany();
     return submissionsList.filter(
       (submission) => submission.status.name === 'Approved',
     );
   }
 
   public async getNotApprovedSubmissionsList() {
-    const submissionsList = await this.getSubmissionBaseQuery().getMany();
+    const submissionsList = await this.getSubmissionBaseQuery()
+      .leftJoin('e.author', 'account')
+      .addSelect([
+        'account.id',
+        'account.username',
+        'account.email',
+        'account.firstName',
+        'account.lastName',
+        'account.roles',
+        'account.faculty',
+      ])
+      .getMany();
 
     return submissionsList.filter(
       (submission) => submission.status.name === 'Not approved',
@@ -278,5 +300,78 @@ export class SubmissionService {
       ...submission,
       status: statusSubmission,
     });
+  }
+
+  public async getSubmissionListByAccount(account: Account) {
+    switch (account.roles.name) {
+      case RoleName.ADMIN:
+        return await this.getSubmissionBaseQuery()
+          .leftJoin('e.author', 'account')
+          .addSelect([
+            'account.id',
+            'account.username',
+            'account.email',
+            'account.firstName',
+            'account.lastName',
+            'account.roles',
+            'account.faculty',
+          ])
+          .getMany();
+
+      case RoleName.MARKETING_MANAGER:
+        return await this.getSubmissionBaseQuery()
+          .leftJoin('e.author', 'account')
+          .addSelect([
+            'account.id',
+            'account.username',
+            'account.email',
+            'account.firstName',
+            'account.lastName',
+            'account.roles',
+            'account.faculty',
+          ])
+          .getMany();
+
+      case RoleName.MARKETING_COORDINATOR:
+        return await this.getSubmissionBaseQuery()
+          .leftJoin('e.author', 'account')
+          .leftJoin('account.faculty', 'faculty')
+          .addSelect([
+            'account.id',
+            'account.username',
+            'account.email',
+            'account.firstName',
+            'account.lastName',
+            'account.roles',
+            'account.faculty',
+          ])
+          .where('faculty.name = :name', {
+            name: account.faculty.name,
+          })
+          .getMany();
+
+      case RoleName.STUDENT:
+        return await this.getSubmissionBaseQuery()
+          .leftJoin('e.author', 'account')
+          .addSelect([
+            'account.id',
+            'account.username',
+            'account.email',
+            'account.firstName',
+            'account.lastName',
+            'account.roles',
+            'account.faculty',
+          ])
+          .where('account.id = :id', {
+            id: account.id,
+          })
+          .getMany();
+
+      case RoleName.GUEST:
+        return await this.getApprovedSubmissionsList();
+
+      default:
+        break;
+    }
   }
 }

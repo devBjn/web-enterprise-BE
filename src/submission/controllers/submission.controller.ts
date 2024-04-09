@@ -36,6 +36,7 @@ export class SubmissionController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @CurrentUser() account: Account,
   ) {
+    console.log(files, 'files controller');
     return await this.submissionService.createSubmission(
       payload,
       files,
@@ -100,5 +101,12 @@ export class SubmissionController {
   async approveSubmission(@Param('id') id) {
     const submission = await this.submissionService.getSubmissionDetail(id);
     return await this.submissionService.approveSubmission(submission);
+  }
+
+  @Get('submission-list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt)
+  async getList(@CurrentUser() account: Account) {
+    return await this.submissionService.getSubmissionListByAccount(account);
   }
 }
