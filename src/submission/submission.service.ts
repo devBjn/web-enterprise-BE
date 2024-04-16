@@ -2,7 +2,7 @@
 import { BadRequestException, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Submissions } from './entity/submission.entity';
-import { Repository } from 'typeorm';
+import { DeleteResult, Repository } from 'typeorm';
 import {
   CreateSubmissionRequest,
   GetSubmissionResponse,
@@ -295,11 +295,54 @@ export class SubmissionService {
       status.description = 'A submission is approved !';
       statusSubmission = await this.statusRepository.save(status);
     }
-    console.log(statusSubmission);
     return await this.submissionRepository.save({
       ...submission,
       status: statusSubmission,
     });
+  }
+
+  public async deniedSubmission(submission: GetSubmissionResponse) {
+    let statusSubmission = await this.statusRepository.findOne({
+      where: {
+        name: 'Denied',
+      },
+    });
+
+    if (!statusSubmission) {
+      const status = new Status();
+      status.name = 'Denied';
+      status.description = 'A submission is denied !';
+      statusSubmission = await this.statusRepository.save(status);
+    }
+
+    return await this.submissionRepository.save({
+      ...submission,
+      status: statusSubmission,
+    });
+  }
+
+  public async removeSubmission(
+    id: string,
+    authorId: string,
+  ): Promise<DeleteResult> {
+    return await this.submissionRepository
+      .createQueryBuilder('e')
+      .delete()
+      .where('id = :id and author = :authorId', {
+        id,
+        authorId,
+      })
+      .execute();
+  }
+
+  public async removeSubmissionByManager(id: string) {
+    return await this.submissionRepository
+      .createQueryBuilder('e')
+      .delete()
+      .where('id = :id', {
+        id,
+      })
+      .execute();
   }
 
   public async getSubmissionListByAccount(account: Account) {

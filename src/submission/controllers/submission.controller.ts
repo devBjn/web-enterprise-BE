@@ -1,7 +1,9 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
   Post,
@@ -103,10 +105,49 @@ export class SubmissionController {
     return await this.submissionService.approveSubmission(submission);
   }
 
+  @Patch('/denied/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.MARKETING_COORDINATOR)
+  async deniedSubmission(@Param('id') id) {
+    const submission = await this.submissionService.getSubmissionDetail(id);
+    return await this.submissionService.deniedSubmission(submission);
+  }
+
   @Get('submission-list')
   @ApiBearerAuth()
   @UseGuards(AuthGuardJwt)
   async getList(@CurrentUser() account: Account) {
     return await this.submissionService.getSubmissionListByAccount(account);
+  }
+
+  @Delete('remove/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @HttpCode(204)
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.STUDENT)
+  async remove(@CurrentUser() account: Account, @Param('id') id: string) {
+    return await this.submissionService.removeSubmission(id, account.id);
+  }
+
+  @Delete('removeByManager/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @HttpCode(204)
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.MARKETING_MANAGER)
+  async removeByManager(
+    @CurrentUser() account: Account,
+    @Param('id') id: string,
+  ) {
+    return await this.submissionService.removeSubmissionByManager(id);
   }
 }
