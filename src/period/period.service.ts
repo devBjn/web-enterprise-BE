@@ -20,4 +20,10 @@ export class PeriodService {
   public async createPeriod(payload: CreatePeriodRequest): Promise<Period> {
     return await this.periodRepository.save(payload);
   }
+
+  public async getPeriod(id: string) {
+    return await this.getPeriodBaseQuery()
+      .andWhere('id = :id', { id })
+      .getOne();
+  }
 }

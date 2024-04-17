@@ -1,6 +1,6 @@
-import { Body, Controller, Post, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { PeriodService } from '../period.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiParam, ApiTags } from '@nestjs/swagger';
 import { AuthGuardJwt } from 'src/auth/auth-guard.jwt';
 import { Period } from '../entity/period.entity';
 import { CreatePeriodRequest } from '../dtos/create.period.dto';
@@ -19,5 +19,15 @@ export class PeriodController {
   @Roles(RoleName.ADMIN)
   async createPeriod(@Body() payload: CreatePeriodRequest): Promise<Period> {
     return await this.periodService.createPeriod(payload);
+  }
+
+  @Get(':id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @UseGuards(AuthGuardJwt)
+  async getDetail(@Param('id') id: string): Promise<Period> {
+    return await this.periodService.getPeriod(id);
   }
 }

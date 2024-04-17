@@ -198,7 +198,8 @@ export class SubmissionService {
       period: submission.period,
       author: submission.author,
       faculty: submission.author.faculty,
-      like: submission.like,
+      likes: submission.likes || [],
+      publish: submission.publish,
       feedbacks,
       comments,
     };
@@ -240,12 +241,14 @@ export class SubmissionService {
       period: periodSubmission,
       createdAt: new Date(),
       author: info,
+      likes: [],
     });
 
     await this.sendEmailForCoordinator();
     return {
       ...submission,
       faculty: account.faculty,
+      publish: false,
     };
   }
 
@@ -371,51 +374,86 @@ export class SubmissionService {
       .execute();
   }
 
-  async like(submissionId: string): Promise<GetSubmissionResponse> {
+  async like(
+    submissionId: string,
+    account: Account,
+  ): Promise<GetSubmissionResponse> {
     const submission = await this.getSubmissionDetail(submissionId);
     if (!submission) {
       throw new NotFoundException('Submission not found');
     }
-    submission.like += 1;
-    const result = await this.submissionRepository.save(submission);
-    return {
-      id: result.id,
-      name: result.name,
-      description: result.description,
-      createdAt: result.createdAt,
-      files: result.files,
-      status: result.status,
-      period: result.period,
-      faculty: result.author.faculty,
-      author: result.author,
-      comments: result.comments,
-      feedbacks: result.feedbacks,
-      like: result.like,
-    };
+
+    const hasLiked = submission.likes.includes(account.id);
+
+    if (!hasLiked) {
+      submission.likes.push(account.id);
+      const result = await this.submissionRepository.save(submission);
+
+      return {
+        id: result.id,
+        name: result.name,
+        description: result.description,
+        createdAt: result.createdAt,
+        files: result.files,
+        status: result.status,
+        period: result.period,
+        faculty: result.author.faculty,
+        author: result.author,
+        comments: result.comments,
+        feedbacks: result.feedbacks,
+        likes: result.likes,
+        publish: result.publish,
+      };
+    } else {
+      return submission;
+    }
   }
 
-  async unlike(submissionId: string): Promise<GetSubmissionResponse> {
+  async unlike(
+    submissionId: string,
+    account: Account,
+  ): Promise<GetSubmissionResponse> {
     const submission = await this.getSubmissionDetail(submissionId);
 
     if (!submission) {
       throw new NotFoundException('Submission not found');
     }
-    submission.like = Math.max(0, submission.like - 1);
-    const result = await this.submissionRepository.save(submission);
-    return {
-      id: result.id,
-      name: result.name,
-      description: result.description,
-      createdAt: result.createdAt,
-      files: result.files,
-      status: result.status,
-      period: result.period,
-      faculty: result.author.faculty,
-      author: result.author,
-      comments: result.comments,
-      feedbacks: result.feedbacks,
-      like: result.like,
-    };
+    const hasLiked = submission.likes.includes(account.id);
+
+    if (hasLiked) {
+      submission.likes = submission.likes.filter(
+        (id: string) => id !== account.id,
+      );
+
+      const result = await this.submissionRepository.save(submission);
+      return {
+        id: result.id,
+        name: result.name,
+        description: result.description,
+        createdAt: result.createdAt,
+        files: result.files,
+        status: result.status,
+        period: result.period,
+        faculty: result.author.faculty,
+        author: result.author,
+        comments: result.comments,
+        feedbacks: result.feedbacks,
+        likes: result.likes,
+        publish: result.publish,
+      };
+    } else {
+      return submission;
+    }
+  }
+
+  public async handlePublishSubmission(
+    submission: GetSubmissionResponse,
+    publish: boolean,
+  ) {
+    return await this.submissionRepository.save({
+      ...submission,
+      publish,
+    });
   }
 
   public async getSubmissionListByAccount(account: Account) {

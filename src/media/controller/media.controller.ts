@@ -27,6 +27,9 @@ export class MediaController {
   }
 
   // @Get('/:name')
+  // @ApiParam({
+  //   name: 'name',
+  // })
   // @Public()
   // async createClient(@Res() res, @Param('name') name: string) {
   //   const buffer = await this.mediaService.download(name);

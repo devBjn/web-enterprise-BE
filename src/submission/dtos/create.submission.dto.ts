@@ -35,7 +35,9 @@ export class GetSubmissionResponse {
 
   author?: GetAccountResponse;
 
-  like: number;
+  likes: string[];
+
+  publish: boolean;
 
   comments?: GetCommentResponse[];
 

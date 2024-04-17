@@ -17,11 +17,15 @@ import { AuthGuardJwt } from 'src/auth/auth-guard.jwt';
 import { RolesGuard } from 'src/roles/roles.guard';
 import { Roles } from 'src/roles/roles.decorator';
 import { RoleName } from 'src/roles/entity/roles.entity';
-import { CreateSubmissionRequest } from '../dtos/create.submission.dto';
+import {
+  CreateSubmissionRequest,
+  GetSubmissionResponse,
+} from '../dtos/create.submission.dto';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { Account } from 'src/account/entity/account.entity';
 import { FilesInterceptor } from '@nestjs/platform-express';
 import { UpdateSubmissionRequest } from '../dtos/update.submission.dto';
+import { PublishSubmissionRequest } from '../dtos/publish.submission.dto';
 
 @Controller('submission')
 @ApiTags('Submission')
@@ -75,8 +79,8 @@ export class SubmissionController {
     name: 'id',
   })
   @UseGuards(AuthGuardJwt)
-  async handleLike(@Param('id') id: string) {
-    return await this.submissionService.like(id);
+  async handleLike(@Param('id') id: string, @CurrentUser() account: Account) {
+    return await this.submissionService.like(id, account);
   }
 
   @Patch('unlike/:id')
@@ -85,8 +89,8 @@ export class SubmissionController {
     name: 'id',
   })
   @UseGuards(AuthGuardJwt)
-  async handleUnlike(@Param('id') id: string) {
-    return await this.submissionService.unlike(id);
+  async handleUnlike(@Param('id') id: string, @CurrentUser() account: Account) {
+    return await this.submissionService.unlike(id, account);
   }
 
   @Patch('/update/:id')
@@ -168,5 +172,23 @@ export class SubmissionController {
     @Param('id') id: string,
   ) {
     return await this.submissionService.removeSubmissionByManager(id);
+  }
+
+  @Patch('publish/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.MARKETING_COORDINATOR)
+  async publish(
+    @Param('id') id: string,
+    @Body() { publish }: PublishSubmissionRequest,
+  ): Promise<GetSubmissionResponse> {
+    const submission = await this.submissionService.getSubmissionDetail(id);
+    return await this.submissionService.handlePublishSubmission(
+      submission,
+      publish,
+    );
   }
 }

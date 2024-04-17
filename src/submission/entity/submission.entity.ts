@@ -35,8 +35,11 @@ export class Submissions {
   @Column({ type: 'json', nullable: true })
   period: Period;
 
-  @Column({ default: 0 })
-  like: number;
+  @Column({ type: 'simple-array' })
+  likes: string[] | [];
+
+  @Column({ type: 'boolean', default: false })
+  publish: boolean;
 
   @OneToMany(() => Comment, (comment) => comment.submission)
   comments?: Comment[] | null;
