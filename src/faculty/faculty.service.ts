@@ -19,4 +19,12 @@ export class FacultyService {
   public async getAllFaculties() {
     return await this.getFacultyBaseQuery().getMany();
   }
+
+  public async getFacultyByName(name: string) {
+    return await this.facultyRepository.findOne({
+      where: {
+        name,
+      },
+    });
+  }
 }

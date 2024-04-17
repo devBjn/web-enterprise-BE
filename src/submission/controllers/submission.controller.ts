@@ -38,7 +38,6 @@ export class SubmissionController {
     @UploadedFiles() files: Array<Express.Multer.File>,
     @CurrentUser() account: Account,
   ) {
-    console.log(files, 'files controller');
     return await this.submissionService.createSubmission(
       payload,
       files,
@@ -68,6 +67,26 @@ export class SubmissionController {
   })
   async getSubmissionDetail(@Param('id') id) {
     return await this.submissionService.getSubmissionDetail(id);
+  }
+
+  @Patch('like/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @UseGuards(AuthGuardJwt)
+  async handleLike(@Param('id') id: string) {
+    return await this.submissionService.like(id);
+  }
+
+  @Patch('unlike/:id')
+  @ApiBearerAuth()
+  @ApiParam({
+    name: 'id',
+  })
+  @UseGuards(AuthGuardJwt)
+  async handleUnlike(@Param('id') id: string) {
+    return await this.submissionService.unlike(id);
   }
 
   @Patch('/update/:id')

@@ -4,7 +4,6 @@ import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import ormConfig from './config/orm.config';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import ormConfigProd from './config/orm.config.prod';
 import { AuthModule } from './auth/auth.module';
 import { AccountModule } from './account/account.module';
 import { MediaModule } from './media/media.module';
@@ -14,6 +13,7 @@ import { StatusModule } from './status/status.module';
 import { PeriodModule } from './period/period.module';
 import { SubmissionModule } from './submission/submission.module';
 import { CommentModule } from './comment/comment.module';
+import { FeedbackModule } from './feedback/feedback.module';
 
 @Module({
   imports: [
@@ -23,8 +23,7 @@ import { CommentModule } from './comment/comment.module';
       expandVariables: true,
     }),
     TypeOrmModule.forRootAsync({
-      useFactory:
-        process.env.NODE_ENV !== 'production' ? ormConfig : ormConfigProd,
+      useFactory: ormConfig,
     }),
     AuthModule,
     AccountModule,
@@ -35,6 +34,7 @@ import { CommentModule } from './comment/comment.module';
     PeriodModule,
     SubmissionModule,
     CommentModule,
+    FeedbackModule,
   ],
   controllers: [AppController],
   providers: [AppService],

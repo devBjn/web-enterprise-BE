@@ -1,9 +1,12 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
+  HttpCode,
   Param,
   Patch,
+  Post,
   UploadedFile,
   UseGuards,
   UseInterceptors,
@@ -22,6 +25,11 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { CurrentUser } from 'src/auth/current-user.decorator';
 import { Account } from '../entity/account.entity';
+import {
+  CreateAccountClientRequest,
+  CreateStudentRequest,
+} from '../dtos/create.account.client.dto';
+import { DeleteResult } from 'typeorm';
 
 @ApiTags('Account')
 @Controller('account')
@@ -90,5 +98,47 @@ export class AccountController {
     const account = await this.accountService.getAccount(id);
 
     return await this.accountService.updateAccountInfo(account, image, payload);
+  }
+
+  @Post('createClient')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.ADMIN)
+  async createClient(
+    @Body() createClientRequest: CreateAccountClientRequest,
+    @CurrentUser() account: Account,
+  ): Promise<GetAccountResponse> {
+    return await this.accountService.createAccountForClient(
+      createClientRequest,
+      undefined,
+      account,
+    );
+  }
+
+  @Post('createStudent')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.MARKETING_COORDINATOR)
+  async createStudent(
+    @Body() createStudent: CreateStudentRequest,
+    @CurrentUser() account: Account,
+  ): Promise<GetAccountResponse> {
+    return await this.accountService.createAccountForClient(
+      undefined,
+      createStudent,
+      account,
+    );
+  }
+
+  @Delete('delete/:id')
+  @ApiParam({
+    name: 'id',
+  })
+  @HttpCode(204)
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt, RolesGuard)
+  @Roles(RoleName.ADMIN)
+  async delete(@Param('id') id: string): Promise<DeleteResult> {
+    return await this.accountService.deleteClient(id);
   }
 }

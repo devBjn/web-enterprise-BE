@@ -1,5 +1,6 @@
 import { Account } from 'src/account/entity/account.entity';
 import { Comment } from 'src/comment/entity/comment.entity';
+import { Feedback } from 'src/feedback/entity/feedback.entity';
 import { Period } from 'src/period/entity/period.entity';
 import { Status } from 'src/status/entity/status.entity';
 import {
@@ -19,7 +20,7 @@ export class Submissions {
   @Column()
   name: string;
 
-  @Column()
+  @Column({ type: 'longtext', nullable: true })
   description: string;
 
   @Column()
@@ -34,8 +35,14 @@ export class Submissions {
   @Column({ type: 'json', nullable: true })
   period: Period;
 
+  @Column({ default: 0 })
+  like: number;
+
   @OneToMany(() => Comment, (comment) => comment.submission)
   comments?: Comment[] | null;
+
+  @OneToMany(() => Feedback, (feedback) => feedback.submission)
+  feedbacks?: Feedback[] | null;
 
   @ManyToOne(() => Account, (account) => account.ownerSubmission, {
     onDelete: 'CASCADE',

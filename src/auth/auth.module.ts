@@ -12,6 +12,7 @@ import { Faculty } from 'src/faculty/entity/faculty.entity';
 import { RolesService } from 'src/roles/roles.service';
 import { MediaService } from 'src/media/media.service';
 import { FirebaseService } from 'src/firebase/firebase.image.service';
+import { FacultyService } from 'src/faculty/faculty.service';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { FirebaseService } from 'src/firebase/firebase.image.service';
     RolesService,
     MediaService,
     FirebaseService,
+    FacultyService,
   ],
   controllers: [AuthController],
 })

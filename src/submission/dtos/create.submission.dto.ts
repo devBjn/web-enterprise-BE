@@ -2,6 +2,7 @@ import { IsString } from 'class-validator';
 import { GetAccountResponse } from 'src/account/dtos/create.account.dto';
 import { GetCommentResponse } from 'src/comment/dtos/create.comment.dto';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
+import { GetFeedbackResponse } from 'src/feedback/dtos/create.feedback.dto';
 import { Period } from 'src/period/entity/period.entity';
 import { Status } from 'src/status/entity/status.entity';
 
@@ -34,5 +35,9 @@ export class GetSubmissionResponse {
 
   author?: GetAccountResponse;
 
+  like: number;
+
   comments?: GetCommentResponse[];
+
+  feedbacks?: GetFeedbackResponse[];
 }

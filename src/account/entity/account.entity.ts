@@ -1,5 +1,6 @@
 import { Comment } from 'src/comment/entity/comment.entity';
 import { Faculty } from 'src/faculty/entity/faculty.entity';
+import { Feedback } from 'src/feedback/entity/feedback.entity';
 import { Roles } from 'src/roles/entity/roles.entity';
 import { Submissions } from 'src/submission/entity/submission.entity';
 import {
@@ -52,6 +53,9 @@ export class Account {
 
   @OneToMany(() => Submissions, (submission) => submission.author)
   ownerSubmission?: Submissions;
+
+  @OneToMany(() => Feedback, (feedback) => feedback.author)
+  ownerFeedback?: Feedback;
 
   @OneToMany(() => Comment, (comment) => comment.author, { cascade: true })
   comments?: Comment[];

@@ -14,6 +14,9 @@ import { Account } from 'src/account/entity/account.entity';
 import { RolesService } from 'src/roles/roles.service';
 import { Roles } from 'src/roles/entity/roles.entity';
 import { JwtService } from '@nestjs/jwt';
+import { FacultyService } from 'src/faculty/faculty.service';
+import { Faculty } from 'src/faculty/entity/faculty.entity';
+import { Feedback } from 'src/feedback/entity/feedback.entity';
 
 @Module({
   imports: [
@@ -24,6 +27,8 @@ import { JwtService } from '@nestjs/jwt';
       Comment,
       Account,
       Roles,
+      Faculty,
+      Feedback,
     ]),
   ],
   controllers: [SubmissionController],
@@ -35,6 +40,7 @@ import { JwtService } from '@nestjs/jwt';
     AccountService,
     RolesService,
     JwtService,
+    FacultyService,
   ],
 })
 export class SubmissionModule {}

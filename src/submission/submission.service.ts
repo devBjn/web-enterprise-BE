@@ -1,5 +1,9 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-import { BadRequestException, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Submissions } from './entity/submission.entity';
 import { DeleteResult, Repository } from 'typeorm';
@@ -16,6 +20,7 @@ import { GetCommentResponse } from 'src/comment/dtos/create.comment.dto';
 import { UpdateSubmissionRequest } from './dtos/update.submission.dto';
 import { AccountService } from 'src/account/account.service';
 import { RoleName } from 'src/roles/entity/roles.entity';
+import { Feedback } from 'src/feedback/entity/feedback.entity';
 
 @Injectable()
 export class SubmissionService {
@@ -28,6 +33,8 @@ export class SubmissionService {
     private readonly periodRepository: Repository<Period>,
     @InjectRepository(Comment)
     private readonly commentRepository: Repository<Comment>,
+    @InjectRepository(Feedback)
+    private readonly feedbackRepository: Repository<Feedback>,
     private readonly mediaService: MediaService,
     private readonly accountService: AccountService,
   ) {}
@@ -55,6 +62,25 @@ export class SubmissionService {
     }
 
     return commentResponse;
+  }
+
+  private async getAllFeedbacksBySubmission(id: string) {
+    return await this.feedbackRepository
+      .createQueryBuilder('e')
+      .orderBy('e.id', 'DESC')
+      .leftJoin('e.author', 'account')
+      .addSelect([
+        'account.id',
+        'account.username',
+        'account.email',
+        'account.firstName',
+        'account.lastName',
+        'account.roles',
+        'account.faculty',
+      ])
+      .leftJoin('e.submission', 'submission')
+      .andWhere('submission.id = :id', { id })
+      .getMany();
   }
 
   private async getAllCommentBySubmission(id: string) {
@@ -161,7 +187,7 @@ export class SubmissionService {
       this.mappedComment(comment),
     );
     const comments = commentsMapped.filter((comment) => !comment.parentId);
-
+    const feedbacks = await this.getAllFeedbacksBySubmission(submission.id);
     return {
       id: submission.id,
       name: submission.name,
@@ -172,6 +198,8 @@ export class SubmissionService {
       period: submission.period,
       author: submission.author,
       faculty: submission.author.faculty,
+      like: submission.like,
+      feedbacks,
       comments,
     };
   }
@@ -202,12 +230,10 @@ export class SubmissionService {
     });
 
     const { password, ...info } = account;
-    console.log(files, 'files');
     const fileUrl = Promise.all(
       files.map(async (file) => await this.mediaService.upload(file)),
     );
     payload.files = await fileUrl;
-    console.log(payload.files, 'payload.files');
     const submission = await this.submissionRepository.save({
       ...payload,
       status: statusSubmission,
@@ -343,6 +369,53 @@ export class SubmissionService {
         id,
       })
       .execute();
+  }
+
+  async like(submissionId: string): Promise<GetSubmissionResponse> {
+    const submission = await this.getSubmissionDetail(submissionId);
+    if (!submission) {
+      throw new NotFoundException('Submission not found');
+    }
+    submission.like += 1;
+    const result = await this.submissionRepository.save(submission);
+    return {
+      id: result.id,
+      name: result.name,
+      description: result.description,
+      createdAt: result.createdAt,
+      files: result.files,
+      status: result.status,
+      period: result.period,
+      faculty: result.author.faculty,
+      author: result.author,
+      comments: result.comments,
+      feedbacks: result.feedbacks,
+      like: result.like,
+    };
+  }
+
+  async unlike(submissionId: string): Promise<GetSubmissionResponse> {
+    const submission = await this.getSubmissionDetail(submissionId);
+
+    if (!submission) {
+      throw new NotFoundException('Submission not found');
+    }
+    submission.like = Math.max(0, submission.like - 1);
+    const result = await this.submissionRepository.save(submission);
+    return {
+      id: result.id,
+      name: result.name,
+      description: result.description,
+      createdAt: result.createdAt,
+      files: result.files,
+      status: result.status,
+      period: result.period,
+      faculty: result.author.faculty,
+      author: result.author,
+      comments: result.comments,
+      feedbacks: result.feedbacks,
+      like: result.like,
+    };
   }
 
   public async getSubmissionListByAccount(account: Account) {
