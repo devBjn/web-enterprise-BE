@@ -21,9 +21,13 @@ export class PeriodService {
     return await this.periodRepository.save(payload);
   }
 
-  public async getPeriod(id: string) {
+  public async getPeriod(academicYear: string) {
     return await this.getPeriodBaseQuery()
-      .andWhere('id = :id', { id })
+      .andWhere('academicYear = :academicYear', { academicYear })
       .getOne();
+  }
+
+  public async getPeriodList() {
+    return await this.getPeriodBaseQuery().getMany();
   }
 }

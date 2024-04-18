@@ -21,13 +21,22 @@ export class PeriodController {
     return await this.periodService.createPeriod(payload);
   }
 
-  @Get(':id')
+  @Get('list')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuardJwt)
+  async getList(): Promise<Period[]> {
+    return await this.periodService.getPeriodList();
+  }
+
+  @Get(':academicYear')
   @ApiBearerAuth()
   @ApiParam({
-    name: 'id',
+    name: 'academicYear',
   })
   @UseGuards(AuthGuardJwt)
-  async getDetail(@Param('id') id: string): Promise<Period> {
-    return await this.periodService.getPeriod(id);
+  async getDetail(
+    @Param('academicYear') academicYear: string,
+  ): Promise<Period> {
+    return await this.periodService.getPeriod(academicYear);
   }
 }
