@@ -166,7 +166,11 @@ export class SubmissionController {
   })
   @HttpCode(204)
   @UseGuards(AuthGuardJwt, RolesGuard)
-  @Roles(RoleName.MARKETING_MANAGER)
+  @Roles(
+    RoleName.ADMIN,
+    RoleName.MARKETING_COORDINATOR,
+    RoleName.MARKETING_MANAGER,
+  )
   async removeByManager(
     @CurrentUser() account: Account,
     @Param('id') id: string,
@@ -180,7 +184,11 @@ export class SubmissionController {
     name: 'id',
   })
   @UseGuards(AuthGuardJwt, RolesGuard)
-  @Roles(RoleName.MARKETING_COORDINATOR)
+  @Roles(
+    RoleName.MARKETING_COORDINATOR,
+    RoleName.ADMIN,
+    RoleName.MARKETING_MANAGER,
+  )
   async publish(
     @Param('id') id: string,
     @Body() { publish }: PublishSubmissionRequest,
