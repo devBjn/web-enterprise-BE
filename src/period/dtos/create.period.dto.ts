@@ -2,10 +2,10 @@ import { IsNotEmpty, IsString } from 'class-validator';
 
 export class CreatePeriodRequest {
   @IsNotEmpty()
-  closureDate: Date;
+  closureDate: string;
 
   @IsNotEmpty()
-  finalClosureDate: Date;
+  finalClosureDate: string;
 
   @IsString()
   @IsNotEmpty()

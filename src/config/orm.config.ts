@@ -28,6 +28,6 @@ export default registerAs(
       Comment,
       Feedback,
     ],
-    synchronize: false,
+    synchronize: true,
   }),
 );

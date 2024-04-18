@@ -6,10 +6,10 @@ export class Period {
   id: string;
 
   @Column()
-  closureDate: Date;
+  closureDate: string;
 
   @Column()
-  finalClosureDate: Date;
+  finalClosureDate: string;
 
   @Column()
   academicYear: string;
